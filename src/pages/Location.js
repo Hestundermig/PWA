@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
 
-
 const Location = () => {
-    const [ip, setIp] = useState();
-    const [dynPos, setDynPos] = useState();
-    const [myPos, setmyPos] = useState(null);
+    const [ip, setIp] = useState("");
+    const [dynPos, setDynPos] = useState(null);
+    const [myPos, setMyPos] = useState(null);
 
     const getIp = async () => {
-        const response = await fetch("https://ipapi.co/json/");
-        const data = await response.json();
-        setIp(data.ip);
+        try {
+            const response = await fetch("https://ipapi.co/json/");
+            const data = await response.json();
+            setIp(data.ip);
+        } catch (error) {
+            console.error("Error fetching IP:", error);
+        }
     };
 
     useEffect(() => {
@@ -18,18 +21,46 @@ const Location = () => {
 
     useEffect(() => {
         if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
+            const handlePosition = (position) => {
                 console.log(position);
-                setmyPos(position);
-            });
+                setMyPos(position);
+            };
+
+            const handlePositionError = (error) => {
+                console.error("Error getting position:", error);
+            };
+
+            const geoOptions = {
+                timeout: 10000, // Increase timeout for better accuracy
+            };
+
+            const geoWatchId = navigator.geolocation.watchPosition(
+                handlePosition,
+                handlePositionError,
+                geoOptions
+            );
+
+            return () => {
+                navigator.geolocation.clearWatch(geoWatchId);
+            };
         }
     }, []);
 
     const handleDynamicPosition = (position) => {
-        setDynPos(position)
-    }
+        setDynPos(position);
+    };
 
-    navigator.geolocation.watchPosition(handleDynamicPosition, handleDynamicPosition, {timeout: 2000})
+    useEffect(() => {
+        const dynamicGeoWatchId = navigator.geolocation.watchPosition(
+            handleDynamicPosition,
+            handleDynamicPosition,
+            { timeout: 2000 }
+        );
+
+        return () => {
+            navigator.geolocation.clearWatch(dynamicGeoWatchId);
+        };
+    }, []);
 
     return (
         <>
