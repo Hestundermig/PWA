@@ -100,21 +100,22 @@ const Location = () => {
             userDecisionTimeout: 5000,
         });
         
-        const [ip, setIp] = useState("");
-        const getIp = async () => {
-                    try {
-                        const response = await fetch("https://ipapi.co/json/");
-                        const data = await response.json();
-                        setIp(data.ip);
-                    } catch (error) {
-                        console.error("Error fetching IP:", error);
-                    }
-                };
+        // const [ip, setIp] = useState("");
+        // const getIp = async () => {
+        //             try {
+        //                 const response = await fetch("https://ipapi.co/json/");
+        //                 const data = await response.json();
+        //                 setIp(data.ip);
+        //             } catch (error) {
+        //                 console.error("Error fetching IP:", error);
+        //             }
+        //         };
             
-                useEffect(() => {
-                    getIp();
-                }, []);
+        //         useEffect(() => {
+        //             getIp();
+        //         }, []);
 
+        // <p>Din ip adresse er: {ip}.</p>
 
     return !isGeolocationAvailable ? (
         <div>Your browser does not support Geolocation</div>
@@ -122,7 +123,6 @@ const Location = () => {
         <div>Geolocation is not enabled</div>
     ) : coords ? (
         <table>
-                <p>Din ip adresse er: {ip}.</p>
             <tbody>
                 <tr>
                     <td>latitude</td>
@@ -148,7 +148,7 @@ const Location = () => {
         </table>
     ) : (
         <div>Getting the location data&hellip; </div>
-    );
+        ); 
 };
 
 export default Location;
